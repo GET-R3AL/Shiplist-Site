@@ -71,7 +71,7 @@
   --faction-caldari-light: rgba(87, 130, 199, 0.5);
 
   /* Background tint (rgba) - can be overridden to change page tint */
-  --bg-tint: rgba(0, 8, 24, 0.55);
+  --bg-tint: rgba(0, 18, 39, 0.55);
   --bg-tint-2: rgba(0, 46, 145, 0.55);
   
   --faction-minmatar: rgba(117, 33, 5, 0.85);
@@ -146,6 +146,7 @@ h1 {
 /* ===== Base ===== */
 html {
   margin: 0px;
+  background-color: black;
 }
 
 body {
@@ -163,7 +164,8 @@ body {
   padding: 0px;
   display: flex;
   justify-content: center;
-  max-height: 100vh;
+  max-height: fit-content;
+  min-height: 100vh;
   max-width: 100vw;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -179,7 +181,7 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  max-width: 80vw;
+  max-width: 80.6vw;
   height: fit-content;
 }
 
@@ -204,8 +206,8 @@ header {
   position: absolute;
   left: 12px;
   top: -15px;
-  height: 15px;
-  font-size: 13px;
+  height: 20px;
+  font-size: 14px;
   text-align: center;
   vertical-align: middle;
   background-color: var(--bg-color3);
@@ -218,8 +220,8 @@ header {
   position: absolute;
   right: 12px;
   top: -15px;
-  height: 15px;
-  font-size: 13px;
+  height: 20px;
+  font-size: 14px;
   text-align: center;
   vertical-align: middle;
   background-color: var(--bg-color3);
@@ -255,6 +257,37 @@ header {
   border-radius: 15px;
   border: var(--border-primary) solid 1px;
   padding: 10px;
+  padding-top: 20px;
+  background-color: var(--bg-color2);
+}
+
+#shipFilterContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: wrap;
+  position: relative;
+  border-radius: 15px;
+  border: var(--border-primary) solid 1px;
+  padding: 10px;
+  padding-top: 20px;
+  background-color: var(--bg-color2);
+}
+
+#factionFilterContainer {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: wrap;
+  position: relative;
+  border-radius: 15px;
+  border: var(--border-primary) solid 1px;
+  padding: 10px;
+  padding-top: 20px;
   background-color: var(--bg-color2);
 }
 
@@ -296,7 +329,7 @@ label {
 #attrFilterContainer .filter-group {
   position: relative;
   height: fit-content;
-  font-size: 12px;
+  /* font-size: 12px; */
   max-width: 222px;
 }
 
@@ -304,6 +337,17 @@ label {
   width: fit-content;
   display: flex;
   flex-wrap: wrap;
+  vertical-align: center;
+  margin: 5px;
+  margin-top: 10px;
+  width: 100%;
+  gap: 8px;
+}
+
+.type-filterwrap {
+  width: fit-content;
+  display: flex;
+  flex-direction: column;
   vertical-align: center;
   margin: 5px;
   margin-top: 10px;
@@ -383,6 +427,24 @@ input:focus {
   align-items: center;
   border-bottom: 4px var(--btn-border-bottom) solid;
   transition: height 0.05s, margin-top 0.05s, filter 0.05s;
+}
+
+#shipFilterContainer .btn-toggle {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+#factionFilterContainer .btn-toggle {
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.buttonwrap:has(.btn-toggle.bg) {
+  width: 100%;
+}
+
+#shipFilterContainer .buttonwrap {
+  width: 100%;
 }
 
 .btn-toggle.active {
@@ -900,6 +962,10 @@ td.unit141 {
   background: linear-gradient(90deg, var(--faction-deathless) 0%, var(--faction-deathless-light) 20%, rgba(0, 0, 0, 0) 50%);
 }
 
+.btn-toggle.bg {
+  background-size: 300% 100%;
+}
+
 /* ===== Responsive ===== */
 @media (max-width: 600px) {
   table, thead, tbody, th, td, tr {
@@ -1037,9 +1103,16 @@ td.unit141 {
 
 <body>
   <div class="table_container" id="tableContainer">
-    <h1>Ship List</h1>
+    <h1>Ship List <p>(Very Work in Progress)</p></h1>
+    
     <div id="filterContainer">
       <div class="filterContainerLabel">Filters</div>
+    </div>
+    <div id="shipFilterContainer">
+      <div class="filterContainerLabel">Advanced Ship Types</div>
+    </div>
+    <div id="factionFilterContainer">
+      <div class="filterContainerLabel">Factions</div>
     </div>
     <div id="attrFilterContainer">
       <div class="filterContainerLabel">Attributes</div>
@@ -1470,6 +1543,78 @@ const EMBEDDED_SHIP_DATA = {
       "style": ""
     }
   ],
+  "factionGroups": [
+    {
+      "factionNames": {
+        "500001": "Caldari State",
+        "500002": "Minmatar Republic",
+        "500003": "Amarr Empire",
+        "500004": "Gallente Federation"
+      },
+      "groupName": "Empire",
+      "header": "Empire",
+      "options": [
+        500001,
+        500002,
+        500003,
+        500004
+      ]
+    },
+    {
+      "factionNames": {
+        "500010": "Guristas Pirates",
+        "500011": "Angel Cartel",
+        "500012": "Blood Raider Covenant",
+        "500016": "Servant Sisters of EVE",
+        "500018": "Mordu's Legion Command",
+        "500019": "Sansha's Nation",
+        "500020": "Serpentis"
+      },
+      "groupName": "Pirate",
+      "header": "Pirate",
+      "options": [
+        500010,
+        500011,
+        500012,
+        500019,
+        500020,
+        500016,
+        500018
+      ]
+    },
+    {
+      "factionNames": {
+        "500006": "CONCORD Assembly",
+        "500014": "ORE",
+        "500017": "The Society of Conscious Thought",
+        "500026": "Triglavian Collective",
+        "500027": "EDENCOM",
+        "500029": "Deathless Circle"
+      },
+      "groupName": "Factions",
+      "header": "Factions",
+      "options": [
+        500026,
+        500027,
+        500006,
+        500014,
+        500029,
+        500017
+      ]
+    },
+    {
+      "factionNames": {
+        "500005": "Jove Empire",
+        "500009": "The Syndicate"
+      },
+      "groupName": "Misc",
+      "header": "Misc",
+      "options": [
+        500009,
+        500005
+      ]
+    }
+  ],
   "filterGroups": [
     {
       "groupName": "Meta Group",
@@ -1559,7 +1704,7 @@ const EMBEDDED_SHIP_DATA = {
           "icon": "battlecruiser",
           "label": "",
           "name": "Battlecruiser",
-          "value": "battleCruiser"
+          "value": "battlecruiser"
         },
         {
           "icon": "cruiser",
@@ -1678,6 +1823,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -1733,6 +1879,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Command Ship",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -1788,6 +1935,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Special Edition Heavy Assault Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -1839,6 +1987,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500003,
+      "groupName": "Supercarrier",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -1894,6 +2043,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500004,
+      "groupName": "Destroyer",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -1949,6 +2099,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500010,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -1999,6 +2150,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500003,
+      "groupName": "Shuttle",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2054,6 +2206,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Covert Ops",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -2105,6 +2258,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500004,
+      "groupName": "Jump Freighter",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -2160,6 +2314,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2215,6 +2370,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -2270,6 +2426,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -2321,6 +2478,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500003,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2371,6 +2529,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500017,
+      "groupName": "Shuttle",
       "marketGroupName": "Special Edition Shuttles",
       "metaID": 1,
       "specialEdition": true,
@@ -2426,6 +2585,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -2481,6 +2641,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2532,6 +2693,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "carrier",
       "factionID": 500003,
+      "groupName": "Carrier",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2587,6 +2749,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Interceptor",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -2638,6 +2801,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500003,
+      "groupName": "Jump Freighter",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -2693,6 +2857,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -2748,6 +2913,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -2803,6 +2969,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -2858,6 +3025,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500012,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -2913,6 +3081,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Command Ship",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -2968,6 +3137,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500016,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -3023,6 +3193,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -3078,6 +3249,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -3133,6 +3305,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -3188,6 +3361,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500027,
+      "groupName": "Freighter",
       "marketGroupName": "Upwell",
       "metaID": 1,
       "specialEdition": false,
@@ -3243,6 +3417,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500003,
+      "groupName": "Titan",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -3298,6 +3473,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500011,
+      "groupName": "Titan",
       "marketGroupName": "Faction Titans",
       "metaID": 4,
       "specialEdition": false,
@@ -3353,6 +3529,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500026,
+      "groupName": "Marauder",
       "marketGroupName": "Triglavian",
       "metaID": 2,
       "specialEdition": false,
@@ -3408,6 +3585,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500001,
+      "groupName": "Hauler",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -3463,6 +3641,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500003,
+      "groupName": "Lancer Dreadnought",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -3518,6 +3697,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -3573,6 +3753,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500018,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -3628,6 +3809,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Logistics",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -3683,6 +3865,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -3738,6 +3921,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Special Edition Heavy Assault Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -3793,6 +3977,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500003,
+      "groupName": "Hauler",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -3848,6 +4033,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500012,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -3903,6 +4089,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500002,
+      "groupName": "Command Destroyer",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -3958,6 +4145,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -4008,6 +4196,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500001,
+      "groupName": "Shuttle",
       "marketGroupName": "Special Edition Shuttles",
       "metaID": 1,
       "specialEdition": true,
@@ -4059,6 +4248,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500014,
+      "groupName": "Freighter",
       "marketGroupName": "ORE",
       "metaID": 1,
       "specialEdition": false,
@@ -4114,6 +4304,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -4169,6 +4360,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -4224,6 +4416,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -4279,6 +4472,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -4334,6 +4528,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -4389,6 +4584,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500001,
+      "groupName": "Deep Space Transport",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -4444,6 +4640,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Covert Ops",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -4499,6 +4696,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500012,
+      "groupName": "Covert Ops",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 4,
       "specialEdition": true,
@@ -4554,6 +4752,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500010,
+      "groupName": "Dreadnought",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -4609,6 +4808,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -4659,6 +4859,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500001,
+      "groupName": "Shuttle",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -4714,6 +4915,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -4769,6 +4971,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -4824,6 +5027,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -4879,6 +5083,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500004,
+      "groupName": "Destroyer",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -4934,6 +5139,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500004,
+      "groupName": "Destroyer",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -4989,6 +5195,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -5044,6 +5251,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500029,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -5099,6 +5307,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -5154,6 +5363,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500010,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 2,
       "specialEdition": true,
@@ -5205,6 +5415,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500001,
+      "groupName": "Freighter",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -5260,6 +5471,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Covert Ops",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -5315,6 +5527,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500012,
+      "groupName": "Dreadnought",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -5366,6 +5579,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "carrier",
       "factionID": 500001,
+      "groupName": "Carrier",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -5421,6 +5635,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500011,
+      "groupName": "Covert Ops",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 4,
       "specialEdition": true,
@@ -5476,6 +5691,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Interceptor",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -5531,6 +5747,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Command Ship",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -5586,6 +5803,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500010,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -5641,6 +5859,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500003,
+      "groupName": "Destroyer",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -5696,6 +5915,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500003,
+      "groupName": "Destroyer",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -5751,6 +5971,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -5806,6 +6027,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500001,
+      "groupName": "Destroyer",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -5861,6 +6083,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500001,
+      "groupName": "Destroyer",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -5916,6 +6139,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500001,
+      "groupName": "Destroyer",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -5966,6 +6190,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500006,
+      "groupName": "Shuttle",
       "marketGroupName": "Special Edition Shuttles",
       "metaID": 4,
       "specialEdition": true,
@@ -6017,6 +6242,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Mining Barge",
       "marketGroupName": "Mining Barges",
       "metaID": 1,
       "specialEdition": false,
@@ -6072,6 +6298,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500001,
+      "groupName": "Blockade Runner",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -6127,6 +6354,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Interceptor",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -6182,6 +6410,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -6237,6 +6466,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -6292,6 +6522,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500012,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -6347,6 +6578,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Interceptor",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -6402,6 +6634,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Combat Recon Ship",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -6457,6 +6690,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Special Edition Heavy Assault Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -6512,6 +6746,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -6567,6 +6802,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -6622,6 +6858,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500011,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -6673,6 +6910,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500012,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Faction Force Auxiliaries",
       "metaID": 4,
       "specialEdition": false,
@@ -6728,6 +6966,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500026,
+      "groupName": "Frigate",
       "marketGroupName": "Triglavian",
       "metaID": 1,
       "specialEdition": false,
@@ -6783,6 +7022,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Command Ship",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -6838,6 +7078,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500020,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -6893,6 +7134,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Logistics Frigate",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -6948,6 +7190,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -7003,6 +7246,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500027,
+      "groupName": "Blockade Runner",
       "marketGroupName": "Upwell",
       "metaID": 2,
       "specialEdition": false,
@@ -7058,6 +7302,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -7113,6 +7358,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -7168,6 +7414,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -7223,6 +7470,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500003,
+      "groupName": "Destroyer",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -7278,6 +7526,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -7333,6 +7582,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -7388,6 +7638,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500011,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -7443,6 +7694,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500026,
+      "groupName": "Command Destroyer",
       "marketGroupName": "Triglavian",
       "metaID": 2,
       "specialEdition": false,
@@ -7498,6 +7750,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500026,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Triglavian",
       "metaID": 4,
       "specialEdition": false,
@@ -7553,6 +7806,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -7604,6 +7858,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500006,
+      "groupName": "Frigate",
       "marketGroupName": "Special Edition Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -7659,6 +7914,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500011,
+      "groupName": "Corvette",
       "marketGroupName": "Special Edition Corvettes",
       "metaID": 4,
       "specialEdition": true,
@@ -7714,6 +7970,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500014,
+      "groupName": "Expedition Frigate",
       "marketGroupName": "Expedition Frigates",
       "metaID": 2,
       "specialEdition": false,
@@ -7769,6 +8026,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500006,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 2,
       "specialEdition": true,
@@ -7824,6 +8082,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -7879,6 +8138,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Command Ship",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -7934,6 +8194,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -7989,6 +8250,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500004,
+      "groupName": "Titan",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -8044,6 +8306,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500004,
+      "groupName": "Interdictor",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -8099,6 +8362,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Logistics",
       "marketGroupName": "Special Edition Logistics",
       "metaID": 4,
       "specialEdition": true,
@@ -8154,6 +8418,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -8209,6 +8474,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -8264,6 +8530,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -8319,6 +8586,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -8374,6 +8642,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -8425,6 +8694,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500002,
+      "groupName": "Freighter",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -8480,6 +8750,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -8535,6 +8806,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -8590,6 +8862,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500019,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Special Edition Heavy Interdiction Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -8645,6 +8918,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500001,
+      "groupName": "Interdictor",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -8700,6 +8974,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -8750,6 +9025,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500004,
+      "groupName": "Shuttle",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -8805,6 +9081,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500018,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -8860,6 +9137,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -8915,6 +9193,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500010,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -8970,6 +9249,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500017,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Special Edition Battlecruisers",
       "metaID": 1,
       "specialEdition": true,
@@ -9025,6 +9305,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Special Edition Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -9080,6 +9361,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Marauder",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -9130,6 +9412,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500001,
+      "groupName": "Shuttle",
       "marketGroupName": "Faction Shuttles",
       "metaID": 3,
       "specialEdition": false,
@@ -9185,6 +9468,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -9240,6 +9524,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -9295,6 +9580,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Logistics",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -9350,6 +9636,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500020,
+      "groupName": "Cruiser",
       "marketGroupName": "Special Edition Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -9400,6 +9687,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500001,
+      "groupName": "Shuttle",
       "marketGroupName": "Faction Shuttles",
       "metaID": 4,
       "specialEdition": false,
@@ -9455,6 +9743,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -9510,6 +9799,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -9565,6 +9855,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -9620,6 +9911,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -9671,6 +9963,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500002,
+      "groupName": "Supercarrier",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -9726,6 +10019,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Covert Ops",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -9781,6 +10075,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500012,
+      "groupName": "Corvette",
       "marketGroupName": "Special Edition Corvettes",
       "metaID": 4,
       "specialEdition": true,
@@ -9836,6 +10131,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500003,
+      "groupName": "Interdictor",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -9891,6 +10187,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -9946,6 +10243,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -10001,6 +10299,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500002,
+      "groupName": "Hauler",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -10056,6 +10355,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Stealth Bomber",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -10111,6 +10411,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500004,
+      "groupName": "Lancer Dreadnought",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -10166,6 +10467,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Combat Recon Ship",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -10217,6 +10519,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Exhumer",
       "marketGroupName": "Exhumers",
       "metaID": 2,
       "specialEdition": false,
@@ -10272,6 +10575,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -10327,6 +10631,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -10382,6 +10687,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500026,
+      "groupName": "Covert Ops",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 2,
       "specialEdition": true,
@@ -10437,6 +10743,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Electronic Attack Ship",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -10492,6 +10799,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -10547,6 +10855,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500001,
+      "groupName": "Corvette",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -10602,6 +10911,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500026,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Triglavian",
       "metaID": 2,
       "specialEdition": false,
@@ -10657,6 +10967,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -10712,6 +11023,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -10767,6 +11079,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500019,
+      "groupName": "Corvette",
       "marketGroupName": "Special Edition Corvettes",
       "metaID": 4,
       "specialEdition": true,
@@ -10822,6 +11135,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500019,
+      "groupName": "Interceptor",
       "marketGroupName": "Special Edition Interceptors",
       "metaID": 4,
       "specialEdition": true,
@@ -10877,6 +11191,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500003,
+      "groupName": "Corvette",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -10932,6 +11247,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500003,
+      "groupName": "Deep Space Transport",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -10987,6 +11303,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -11042,6 +11359,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -11097,6 +11415,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -11147,6 +11466,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500004,
+      "groupName": "Shuttle",
       "marketGroupName": "Special Edition Shuttles",
       "metaID": 1,
       "specialEdition": true,
@@ -11202,6 +11522,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -11257,6 +11578,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -11312,6 +11634,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -11367,6 +11690,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -11422,6 +11746,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500001,
+      "groupName": "Lancer Dreadnought",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -11477,6 +11802,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Electronic Attack Ship",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -11532,6 +11858,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -11587,6 +11914,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500011,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -11642,6 +11970,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500026,
+      "groupName": "Destroyer",
       "marketGroupName": "Triglavian",
       "metaID": 1,
       "specialEdition": false,
@@ -11697,6 +12026,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Logistics Frigate",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -11752,6 +12082,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Electronic Attack Ship",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -11807,6 +12138,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500010,
+      "groupName": "Titan",
       "marketGroupName": "Faction Titans",
       "metaID": 4,
       "specialEdition": false,
@@ -11862,6 +12194,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Marauder",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -11917,6 +12250,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -11972,6 +12306,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Combat Recon Ship",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -12027,6 +12362,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500018,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Special Edition Heavy Interdiction Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -12077,6 +12413,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500002,
+      "groupName": "Shuttle",
       "marketGroupName": "Special Edition Shuttles",
       "metaID": 1,
       "specialEdition": true,
@@ -12132,6 +12469,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500026,
+      "groupName": "Battleship",
       "marketGroupName": "Triglavian",
       "metaID": 4,
       "specialEdition": false,
@@ -12187,6 +12525,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500001,
+      "groupName": "Titan",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -12238,6 +12577,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500002,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -12289,6 +12629,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500010,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Faction Force Auxiliaries",
       "metaID": 4,
       "specialEdition": false,
@@ -12344,6 +12685,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500011,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -12395,6 +12737,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Exhumer",
       "marketGroupName": "Exhumers",
       "metaID": 2,
       "specialEdition": false,
@@ -12450,6 +12793,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -12505,6 +12849,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -12560,6 +12905,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -12615,6 +12961,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500004,
+      "groupName": "Command Destroyer",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -12670,6 +13017,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Interceptor",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -12725,6 +13073,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -12780,6 +13129,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -12835,6 +13185,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500010,
+      "groupName": "Destroyer",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -12890,6 +13241,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500002,
+      "groupName": "Hauler",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -12945,6 +13297,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Stealth Bomber",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -13000,6 +13353,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500006,
+      "groupName": "Black Ops",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 2,
       "specialEdition": true,
@@ -13055,6 +13409,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500002,
+      "groupName": "Deep Space Transport",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -13110,6 +13465,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -13165,6 +13521,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -13220,6 +13577,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -13275,6 +13633,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -13330,6 +13689,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -13385,6 +13745,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500011,
+      "groupName": "Destroyer",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -13440,6 +13801,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Frigate",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -13495,6 +13857,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500017,
+      "groupName": "Frigate",
       "marketGroupName": "Special Edition Frigates",
       "metaID": 1,
       "specialEdition": true,
@@ -13550,6 +13913,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -13605,6 +13969,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Special Edition Industrial Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -13660,6 +14025,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Special Edition Industrial Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -13715,6 +14081,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Special Edition Industrial Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -13770,6 +14137,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Special Edition Heavy Assault Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -13820,6 +14188,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "shuttle",
       "factionID": 500002,
+      "groupName": "Shuttle",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -13871,6 +14240,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500001,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -13926,6 +14296,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -13981,6 +14352,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500012,
+      "groupName": "Titan",
       "marketGroupName": "Faction Titans",
       "metaID": 4,
       "specialEdition": false,
@@ -14032,6 +14404,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500006,
+      "groupName": "Flag Cruiser",
       "marketGroupName": "CONCORD",
       "metaID": 2,
       "specialEdition": false,
@@ -14087,6 +14460,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500011,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -14142,6 +14516,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500004,
+      "groupName": "Dreadnought",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -14197,6 +14572,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500004,
+      "groupName": "Dreadnought",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -14252,6 +14628,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -14307,6 +14684,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -14362,6 +14740,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -14417,6 +14796,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Attack Battlecruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -14472,6 +14852,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500002,
+      "groupName": "Dreadnought",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -14527,6 +14908,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500002,
+      "groupName": "Dreadnought",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -14582,6 +14964,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -14637,6 +15020,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Stealth Bomber",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -14692,6 +15076,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Hauler",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -14747,6 +15132,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500026,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Triglavian",
       "metaID": 2,
       "specialEdition": false,
@@ -14802,6 +15188,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500016,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -14853,6 +15240,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "carrier",
       "factionID": 500002,
+      "groupName": "Carrier",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -14908,6 +15296,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Command Ship",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -14963,6 +15352,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500019,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -15014,6 +15404,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "forceAuxiliary",
       "factionID": 500004,
+      "groupName": "Force Auxiliary",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -15064,6 +15455,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500014,
+      "groupName": "Hauler",
       "marketGroupName": "ORE",
       "metaID": 1,
       "specialEdition": false,
@@ -15115,6 +15507,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500002,
+      "groupName": "Jump Freighter",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -15166,6 +15559,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500004,
+      "groupName": "Supercarrier",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -15217,6 +15611,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500004,
+      "groupName": "Freighter",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -15272,6 +15667,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Deep Space Transport",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -15327,6 +15723,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -15382,6 +15779,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -15437,6 +15835,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Logistics",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -15492,6 +15891,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -15547,6 +15947,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Special Edition Cruisers",
       "metaID": 1,
       "specialEdition": true,
@@ -15602,6 +16003,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Attack Battlecruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -15653,6 +16055,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrialCommand",
       "factionID": 500014,
+      "groupName": "Industrial Command Ship",
       "marketGroupName": "ORE",
       "metaID": 2,
       "specialEdition": false,
@@ -15708,6 +16111,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500018,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -15763,6 +16167,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -15818,6 +16223,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -15873,6 +16279,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500006,
+      "groupName": "Covert Ops",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 2,
       "specialEdition": true,
@@ -15928,6 +16335,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Marauder",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -15983,6 +16391,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Black Ops",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -16038,6 +16447,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500019,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -16093,6 +16503,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Heavy Interdiction Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -16148,6 +16559,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500001,
+      "groupName": "Dreadnought",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -16203,6 +16615,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500001,
+      "groupName": "Dreadnought",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -16258,6 +16671,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -16313,6 +16727,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500003,
+      "groupName": "Command Destroyer",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -16364,6 +16779,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrialCommand",
       "factionID": 500014,
+      "groupName": "Industrial Command Ship",
       "marketGroupName": "ORE",
       "metaID": 2,
       "specialEdition": false,
@@ -16419,6 +16835,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500017,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 1,
       "specialEdition": true,
@@ -16466,6 +16883,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500014,
+      "groupName": "Hauler",
       "marketGroupName": "Special Edition Industrial Ships",
       "metaID": 1,
       "specialEdition": true,
@@ -16521,6 +16939,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -16576,6 +16995,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -16627,6 +17047,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Mining Barge",
       "marketGroupName": "Mining Barges",
       "metaID": 1,
       "specialEdition": false,
@@ -16682,6 +17103,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -16737,6 +17159,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500003,
+      "groupName": "Combat Battlecruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -16792,6 +17215,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500003,
+      "groupName": "Blockade Runner",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -16847,6 +17271,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500014,
+      "groupName": "Expedition Frigate",
       "marketGroupName": "Expedition Frigates",
       "metaID": 2,
       "specialEdition": false,
@@ -16898,6 +17323,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500003,
+      "groupName": "Freighter",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -16953,6 +17379,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500002,
+      "groupName": "Blockade Runner",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -17008,6 +17435,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -17063,6 +17491,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Stealth Bomber",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -17118,6 +17547,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500010,
+      "groupName": "Black Ops",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -17173,6 +17603,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500012,
+      "groupName": "Logistics",
       "marketGroupName": "Special Edition Logistics",
       "metaID": 4,
       "specialEdition": true,
@@ -17228,6 +17659,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500002,
+      "groupName": "Titan",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -17283,6 +17715,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500018,
+      "groupName": "Electronic Attack Ship",
       "marketGroupName": "Special Edition Electronic Attack Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -17338,6 +17771,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -17393,6 +17827,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500001,
+      "groupName": "Interceptor",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -17448,6 +17883,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500010,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -17503,6 +17939,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -17558,6 +17995,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -17613,6 +18051,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -17668,6 +18107,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500002,
+      "groupName": "Corvette",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -17723,6 +18163,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500003,
+      "groupName": "Black Ops",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -17778,6 +18219,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -17833,6 +18275,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -17884,6 +18327,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Mining Barge",
       "marketGroupName": "Mining Barges",
       "metaID": 1,
       "specialEdition": false,
@@ -17939,6 +18383,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500003,
+      "groupName": "Dreadnought",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -17994,6 +18439,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500003,
+      "groupName": "Dreadnought",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -18045,6 +18491,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500019,
+      "groupName": "Supercarrier",
       "marketGroupName": "Faction Carrier",
       "metaID": 4,
       "specialEdition": false,
@@ -18096,6 +18543,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500001,
+      "groupName": "Jump Freighter",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -18151,6 +18599,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -18206,6 +18655,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500026,
+      "groupName": "Cruiser",
       "marketGroupName": "Triglavian",
       "metaID": 1,
       "specialEdition": false,
@@ -18261,6 +18711,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -18316,6 +18767,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500001,
+      "groupName": "Combat Recon Ship",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -18367,6 +18819,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "freighter",
       "factionID": 500014,
+      "groupName": "Capital Industrial Ship",
       "marketGroupName": "ORE",
       "metaID": 1,
       "specialEdition": false,
@@ -18422,6 +18875,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -18477,6 +18931,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500002,
+      "groupName": "Interdictor",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -18532,6 +18987,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -18587,6 +19043,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500011,
+      "groupName": "Dreadnought",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -18642,6 +19099,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Logistics Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -18697,6 +19155,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Logistics",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -18752,6 +19211,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -18807,6 +19267,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -18862,6 +19323,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -18917,6 +19379,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -18972,6 +19435,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Electronic Attack Ship",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -19027,6 +19491,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -19082,6 +19547,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500010,
+      "groupName": "Covert Ops",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 4,
       "specialEdition": true,
@@ -19137,6 +19603,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500003,
+      "groupName": "Hauler",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -19192,6 +19659,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Special Edition Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -19247,6 +19715,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500004,
+      "groupName": "Black Ops",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -19298,6 +19767,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "miningBarge",
       "factionID": 500014,
+      "groupName": "Exhumer",
       "marketGroupName": "Exhumers",
       "metaID": 2,
       "specialEdition": false,
@@ -19353,6 +19823,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500027,
+      "groupName": "Frigate",
       "marketGroupName": "EDENCOM",
       "metaID": 1,
       "specialEdition": false,
@@ -19408,6 +19879,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -19463,6 +19935,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Command Ship",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -19518,6 +19991,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500027,
+      "groupName": "Hauler",
       "marketGroupName": "Upwell",
       "metaID": 1,
       "specialEdition": false,
@@ -19573,6 +20047,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -19628,6 +20103,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -19683,6 +20159,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Interceptor",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -19738,6 +20215,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500001,
+      "groupName": "Command Destroyer",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -19793,6 +20271,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500027,
+      "groupName": "Cruiser",
       "marketGroupName": "EDENCOM",
       "metaID": 1,
       "specialEdition": false,
@@ -19848,6 +20327,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500016,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -19903,6 +20383,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500016,
+      "groupName": "Cruiser",
       "marketGroupName": "",
       "metaID": 4,
       "specialEdition": false,
@@ -19958,6 +20439,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500019,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -20013,6 +20495,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500017,
+      "groupName": "Destroyer",
       "marketGroupName": "Special Edition Destroyers",
       "metaID": 1,
       "specialEdition": true,
@@ -20068,6 +20551,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500010,
+      "groupName": "Corvette",
       "marketGroupName": "Special Edition Corvettes",
       "metaID": 4,
       "specialEdition": true,
@@ -20123,6 +20607,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500004,
+      "groupName": "Attack Battlecruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -20178,6 +20663,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500002,
+      "groupName": "Destroyer",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -20233,6 +20719,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Interceptor",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -20288,6 +20775,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500001,
+      "groupName": "Hauler",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -20343,6 +20831,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -20398,6 +20887,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -20453,6 +20943,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Special Edition Battleships",
       "metaID": 4,
       "specialEdition": true,
@@ -20508,6 +20999,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Logistics Frigate",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -20559,6 +21051,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "carrier",
       "factionID": 500004,
+      "groupName": "Carrier",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -20614,6 +21107,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500029,
+      "groupName": "Destroyer",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -20669,6 +21163,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -20724,6 +21219,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500002,
+      "groupName": "Destroyer",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -20779,6 +21275,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "destroyer",
       "factionID": 500002,
+      "groupName": "Destroyer",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -20834,6 +21331,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500027,
+      "groupName": "Battleship",
       "marketGroupName": "EDENCOM",
       "metaID": 4,
       "specialEdition": false,
@@ -20889,6 +21387,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500026,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 2,
       "specialEdition": true,
@@ -20944,6 +21443,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Frigate",
       "marketGroupName": "Amarr",
       "metaID": 1,
       "specialEdition": false,
@@ -20999,6 +21499,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500002,
+      "groupName": "Attack Battlecruiser",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -21054,6 +21555,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500027,
+      "groupName": "Deep Space Transport",
       "marketGroupName": "Upwell",
       "metaID": 2,
       "specialEdition": false,
@@ -21109,6 +21611,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Frigate",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -21164,6 +21667,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -21219,6 +21723,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Battleship",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -21274,6 +21779,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500004,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Special Edition Assault Frigates",
       "metaID": 4,
       "specialEdition": true,
@@ -21329,6 +21835,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500002,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -21384,6 +21891,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500002,
+      "groupName": "Lancer Dreadnought",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -21439,6 +21947,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Special Edition Heavy Assault Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -21494,6 +22003,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "titan",
       "factionID": 500020,
+      "groupName": "Titan",
       "marketGroupName": "Faction Titans",
       "metaID": 4,
       "specialEdition": false,
@@ -21549,6 +22059,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500002,
+      "groupName": "Marauder",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -21604,6 +22115,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500026,
+      "groupName": "Cruiser",
       "marketGroupName": "Triglavian",
       "metaID": 1,
       "specialEdition": false,
@@ -21659,6 +22171,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500020,
+      "groupName": "Dreadnought",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -21714,6 +22227,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500004,
+      "groupName": "Corvette",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -21765,6 +22279,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500020,
+      "groupName": "Supercarrier",
       "marketGroupName": "Faction Carrier",
       "metaID": 4,
       "specialEdition": false,
@@ -21820,6 +22335,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500003,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -21875,6 +22391,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500014,
+      "groupName": "Frigate",
       "marketGroupName": "ORE",
       "metaID": 1,
       "specialEdition": false,
@@ -21930,6 +22447,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Gallente",
       "metaID": 1,
       "specialEdition": false,
@@ -21985,6 +22503,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500004,
+      "groupName": "Cruiser",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -22040,6 +22559,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500004,
+      "groupName": "Blockade Runner",
       "marketGroupName": "Gallente",
       "metaID": 2,
       "specialEdition": false,
@@ -22095,6 +22615,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500020,
+      "groupName": "Force Recon Ship",
       "marketGroupName": "Special Edition Recon Ships",
       "metaID": 4,
       "specialEdition": true,
@@ -22146,6 +22667,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500009,
+      "groupName": "Cruiser",
       "marketGroupName": "Special Edition Cruisers",
       "metaID": 4,
       "specialEdition": true,
@@ -22201,6 +22723,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -22256,6 +22779,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Frigate",
       "marketGroupName": "Navy Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -22311,6 +22835,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500020,
+      "groupName": "Cruiser",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -22366,6 +22891,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500020,
+      "groupName": "Battleship",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -22421,6 +22947,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "rookie",
       "factionID": 500020,
+      "groupName": "Corvette",
       "marketGroupName": "Special Edition Corvettes",
       "metaID": 4,
       "specialEdition": true,
@@ -22476,6 +23003,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500020,
+      "groupName": "Stealth Bomber",
       "marketGroupName": "Special Edition Covert Ops",
       "metaID": 4,
       "specialEdition": true,
@@ -22531,6 +23059,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battlecruiser",
       "factionID": 500001,
+      "groupName": "Command Ship",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -22586,6 +23115,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500010,
+      "groupName": "Interceptor",
       "marketGroupName": "Special Edition Interceptors",
       "metaID": 2,
       "specialEdition": true,
@@ -22641,6 +23171,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "battleship",
       "factionID": 500001,
+      "groupName": "Black Ops",
       "marketGroupName": "Caldari",
       "metaID": 2,
       "specialEdition": false,
@@ -22696,6 +23227,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500002,
+      "groupName": "Assault Frigate",
       "marketGroupName": "Minmatar",
       "metaID": 2,
       "specialEdition": false,
@@ -22751,6 +23283,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500010,
+      "groupName": "Frigate",
       "marketGroupName": "Pirate Faction",
       "metaID": 4,
       "specialEdition": false,
@@ -22806,6 +23339,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "industrial",
       "factionID": 500002,
+      "groupName": "Hauler",
       "marketGroupName": "Minmatar",
       "metaID": 1,
       "specialEdition": false,
@@ -22857,6 +23391,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "superCarrier",
       "factionID": 500001,
+      "groupName": "Supercarrier",
       "marketGroupName": "Caldari",
       "metaID": 1,
       "specialEdition": false,
@@ -22912,6 +23447,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500026,
+      "groupName": "Logistics",
       "marketGroupName": "Triglavian",
       "metaID": 2,
       "specialEdition": false,
@@ -22967,6 +23503,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "cruiser",
       "factionID": 500003,
+      "groupName": "Heavy Assault Cruiser",
       "marketGroupName": "Amarr",
       "metaID": 2,
       "specialEdition": false,
@@ -23017,6 +23554,7 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "frigate",
       "factionID": 500009,
+      "groupName": "Prototype Exploration Ship",
       "marketGroupName": "Special Edition Frigates",
       "metaID": 1,
       "specialEdition": true,
@@ -23072,11 +23610,86 @@ const EMBEDDED_SHIP_DATA = {
       },
       "bracketIcon": "dreadnought",
       "factionID": 500026,
+      "groupName": "Dreadnought",
       "marketGroupName": "Triglavian",
       "metaID": 1,
       "specialEdition": false,
       "typeID": 52907,
       "typeName": "Zirnitra"
+    }
+  ],
+  "t2ShipGroups": [
+    {
+      "groupName": "Frigate",
+      "header": "Frigate",
+      "options": [
+        "Frigate",
+        "Assault Frigate",
+        "Interceptor",
+        "Stealth Bomber",
+        "Covert Ops",
+        "Electronic Attack Ship",
+        "Logistics Frigate"
+      ]
+    },
+    {
+      "groupName": "Destroyer",
+      "header": "Destroyer",
+      "options": [
+        "Destroyer",
+        "Command Destroyer",
+        "Interdictor"
+      ]
+    },
+    {
+      "groupName": "Cruiser",
+      "header": "Cruiser",
+      "options": [
+        "Cruiser",
+        "Heavy Assault Cruiser",
+        "Force Recon Ship",
+        "Combat Recon Ship",
+        "Heavy Interdiction Cruiser",
+        "Logistics",
+        "Flag Cruiser"
+      ]
+    },
+    {
+      "groupName": "Battlecruiser",
+      "header": "Battlecruiser",
+      "options": [
+        "Combat Battlecruiser",
+        "Attack Battlecruiser",
+        "Command Ship"
+      ]
+    },
+    {
+      "groupName": "Battleship",
+      "header": "Battleship",
+      "options": [
+        "Battleship",
+        "Black Ops",
+        "Marauder"
+      ]
+    },
+    {
+      "groupName": "Capital",
+      "header": "Capital",
+      "options": [
+        "Lancer Dreadnought"
+      ]
+    },
+    {
+      "groupName": "Industrial",
+      "header": "Industrial",
+      "options": [
+        "Blockade Runner",
+        "Deep Space Transport",
+        "Jump Freighter",
+        "Expedition Frigate",
+        "Exhumer",
+        "Industrial Command Ship"
+      ]
     }
   ]
 };
@@ -23306,6 +23919,7 @@ function createCollapseButton(container) {
   const btn = document.createElement('button')
   btn.textContent = ''
   btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small', 'collapse-btn')
+  btn.dataset.hoverText = 'Expand/Collapse'
   
   const icon = document.createElement('img')
   icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
@@ -23428,6 +24042,7 @@ function createToggleButton(clickHandler) {
   const btn = document.createElement('button')
   btn.textContent = ''
   btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small')
+  btn.dataset.hoverText = 'Toggle All'
   
   const icon = document.createElement('img')
   icon.src = getEmbeddedImage('ui/category_icons/randomize_32px.png')
@@ -23617,39 +24232,39 @@ function buildGeneralFilterButtons() {
   buttonWrap.classList.add('buttonwrap')
   wrapper.appendChild(buttonWrap)
 
-  const enableAll = document.createElement('button')
-  enableAll.id = 'enableAllBtn'
-  enableAll.classList.add('btn-toggle')
-  buttonWrap.appendChild(enableAll)
+  // const enableAll = document.createElement('button')
+  // enableAll.id = 'enableAllBtn'
+  // enableAll.classList.add('btn-toggle')
+  // buttonWrap.appendChild(enableAll)
 
-  const disableAll = document.createElement('button')
-  disableAll.id = 'disableAllBtn'
-  disableAll.classList.add('btn-toggle')
-  buttonWrap.appendChild(disableAll)
+  // const disableAll = document.createElement('button')
+  // disableAll.id = 'disableAllBtn'
+  // disableAll.classList.add('btn-toggle')
+  // buttonWrap.appendChild(disableAll)
 
   filterContainer.appendChild(wrapper)
 
-  enableAll.addEventListener('click', () => {
-    document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
-      .forEach(btn => {
-        // Skip meta filters
-        if (btn.dataset.filterKey !== 'metaID') {
-          btn.classList.remove('active')
-        }
-      })
-    applyFilters()
-  })
+  // enableAll.addEventListener('click', () => {
+  //   document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
+  //     .forEach(btn => {
+  //       // Skip meta filters
+  //       if (btn.dataset.filterKey !== 'metaID') {
+  //         btn.classList.remove('active')
+  //       }
+  //     })
+  //   applyFilters()
+  // })
 
-  disableAll.addEventListener('click', () => {
-    document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
-      .forEach(btn => {
-        // Skip meta filters
-        if (btn.dataset.filterKey !== 'metaID') {
-          btn.classList.add('active')
-        }
-      })
-    applyFilters()
-  })
+  // disableAll.addEventListener('click', () => {
+  //   document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
+  //     .forEach(btn => {
+  //       // Skip meta filters
+  //       if (btn.dataset.filterKey !== 'metaID') {
+  //         btn.classList.add('active')
+  //       }
+  //     })
+  //   applyFilters()
+  // })
 }
 
 function applyFilters() {
@@ -23667,9 +24282,9 @@ function applyFilters() {
     filters[radio.dataset.filterKey] = normalizeValue(radio.value)
   })
 
-  // Collect toggle exclusions
-  const allToggles = document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
-  const activeToggles = document.querySelectorAll('#filterContainer button.active:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn)')
+  // Collect toggle exclusions from all filter containers
+  const allToggles = document.querySelectorAll('#filterContainer .btn-toggle:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn), #shipFilterContainer .btn-toggle:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn), #factionFilterContainer .btn-toggle:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn)')
+  const activeToggles = document.querySelectorAll('#filterContainer button.active:not(#enableAllBtn):not(#disableAllBtn):not(.reset-btn), #shipFilterContainer button.active:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn), #factionFilterContainer button.active:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn)')
   const exclusions = {}
 
   if (activeToggles.length !== allToggles.length) {
@@ -23692,6 +24307,413 @@ function applyFilters() {
   applyCurrentSort()
 }
 
+// T2 Ship Type Filter UI
+
+
+
+function buildT2ShipFilterUI(t2Groups) {
+  const container = document.getElementById('shipFilterContainer')
+  if (!container) return
+  
+  // Global toggle header
+  const globalHeader = createGlobalToggleHeader(container)
+  container.appendChild(globalHeader)
+  
+  // Add all T2 ship type groups
+  t2Groups.forEach(group => {
+    const groupElement = createT2FilterGroup(group)
+    container.appendChild(groupElement)
+  })
+}
+
+function createGlobalToggleHeader(container) {
+  const globalHeader = document.createElement('div')
+  globalHeader.classList.add('filter-section-header')
+  
+  const title = document.createElement('div')
+  title.textContent = 'Toggle/Expand'
+  title.style.margin = '0'
+  
+  // Container for both buttons
+  const buttonContainer = document.createElement('div')
+  buttonContainer.style.cssText = 'display: flex; gap: 8px; align-items: center;'
+  
+  // Collapse button
+  const collapseBtn = createCollapseButton(container)
+  
+  // Toggle all button
+  const globalToggleBtn = createToggleButton(() => {
+    const allButtons = Array.from(container.querySelectorAll('.btn-toggle:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn)'))
+    const hasVisible = allButtons.some(b => !b.classList.contains('active'))
+    
+    allButtons.forEach(b => {
+      const shouldBeActive = hasVisible
+      const isActive = b.classList.contains('active')
+      
+      if (shouldBeActive !== isActive) {
+        b.classList.toggle('active')
+      }
+    })
+    
+    applyFilters()
+  })
+  
+  buttonContainer.appendChild(globalToggleBtn)
+  buttonContainer.appendChild(collapseBtn)
+  
+  globalHeader.appendChild(title)
+  globalHeader.appendChild(buttonContainer)
+  return globalHeader
+}
+
+function createCollapseButton(container) {
+  const btn = document.createElement('button')
+  btn.textContent = ''
+  btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small', 'collapse-btn')
+  btn.dataset.hoverText = 'Expand/Collapse'
+  
+  const icon = document.createElement('img')
+  icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
+  icon.width = 12
+  icon.height = 12
+  btn.appendChild(icon)
+  
+  let isCollapsed = false
+  
+  btn.addEventListener('click', () => {
+    icon.classList.remove('spin-once')
+    void icon.offsetWidth
+    icon.classList.add('spin-once')
+    
+    isCollapsed = !isCollapsed
+    
+    const filterGroups = container.querySelectorAll('.filter-group-wrap')
+    
+    filterGroups.forEach(group => {
+      if (isCollapsed) {
+        group.style.display = 'none'
+      } else {
+        group.style.display = ''
+      }
+    })
+    
+    if (isCollapsed) {
+      icon.style.transform = 'rotate(180deg)'
+    } else {
+      icon.style.transform = 'rotate(0deg)'
+    }
+  })
+  
+  return btn
+}
+
+function createToggleButton(clickHandler) {
+  const btn = document.createElement('button')
+  btn.textContent = ''
+  btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small')
+  btn.dataset.hoverText = 'Toggle All'
+  
+  const icon = document.createElement('img')
+  icon.src = getEmbeddedImage('ui/category_icons/randomize_32px.png')
+  icon.width = 12
+  icon.height = 12
+  btn.appendChild(icon)
+  
+  btn.addEventListener('click', () => {
+    icon.classList.remove('spin-once')
+    void icon.offsetWidth
+    icon.classList.add('spin-once')
+    clickHandler()
+  })
+  
+  return btn
+}
+
+function createT2FilterGroup(group) {
+  const fgwrapper = document.createElement('div')
+  fgwrapper.classList.add('filter-group-wrap')
+
+  const wrapper = document.createElement('div')
+  wrapper.classList.add('filter-group')
+  
+  // Group header with reset button
+  const header = document.createElement('div')
+  header.classList.add('filter-group-header')
+  
+  const headerTitle = document.createElement('div')
+  headerTitle.classList.add('filter-group-label')
+  headerTitle.textContent = group.header
+  header.appendChild(headerTitle)
+  
+  // Add small reset button to header
+  const resetBtn = document.createElement('button')
+  resetBtn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small')
+  resetBtn.dataset.hoverText = 'Toggle All'
+  resetBtn.textContent = ''
+  
+  const resetIcon = document.createElement('img')
+  resetIcon.src = getEmbeddedImage('ui/category_icons/randomize_32px.png')
+  resetIcon.width = 12
+  resetIcon.height = 12
+  resetBtn.appendChild(resetIcon)
+  
+  resetBtn.addEventListener('click', () => {
+    resetIcon.classList.remove('spin-once')
+    void resetIcon.offsetWidth
+    resetIcon.classList.add('spin-once')
+    
+    const buttons = wrapper.querySelectorAll('.btn-toggle:not(.reset-btn):not(.reset-btn-small)')
+    const hasActive = Array.from(buttons).some(b => b.classList.contains('active'))
+    
+    if (!hasActive) {
+      buttons.forEach(b => b.classList.add('active'))
+    } else {
+      buttons.forEach(b => b.classList.remove('active'))
+    }
+    
+    applyFilters()
+  })
+  
+  header.appendChild(resetBtn)
+  wrapper.appendChild(header)
+  fgwrapper.appendChild(wrapper)
+  
+  // Button container
+  const buttonWrap = document.createElement('div')
+  buttonWrap.classList.add('type-filterwrap')
+  wrapper.appendChild(buttonWrap)
+  
+  // Create buttons for each ship type
+  group.options.forEach(shipType => {
+    // Create individual button wrapper
+    const btnWrapper = document.createElement('div')
+    btnWrapper.classList.add('buttonwrap')
+    
+    const btn = document.createElement('button')
+    btn.textContent = shipType
+    btn.classList.add('btn-toggle')
+    btn.dataset.filterKey = 'groupName'
+    btn.dataset.filterValue = shipType
+    
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active')
+      applyFilters()
+    })
+    
+    btnWrapper.appendChild(btn)
+    buttonWrap.appendChild(btnWrapper)
+    wrapper.appendChild(buttonWrap)
+  })
+  
+  return fgwrapper
+}
+
+
+// Faction Filter UI
+
+
+
+function buildFactionFilterUI(factionGroups) {
+  const container = document.getElementById('factionFilterContainer')
+  if (!container) return
+  
+  // Global toggle header
+  const globalHeader = createGlobalToggleHeader(container)
+  container.appendChild(globalHeader)
+  
+  // Add all faction groups
+  factionGroups.forEach(group => {
+    const groupElement = createFactionFilterGroup(group)
+    container.appendChild(groupElement)
+  })
+}
+
+function createGlobalToggleHeader(container) {
+  const globalHeader = document.createElement('div')
+  globalHeader.classList.add('filter-section-header')
+  
+  const title = document.createElement('div')
+  title.textContent = 'Toggle/Expand'
+  title.style.margin = '0'
+  
+  // Container for both buttons
+  const buttonContainer = document.createElement('div')
+  buttonContainer.style.cssText = 'display: flex; gap: 8px; align-items: center;'
+  
+  // Collapse button
+  const collapseBtn = createCollapseButton(container)
+  
+  // Toggle all button
+  const globalToggleBtn = createToggleButton(() => {
+    const allButtons = Array.from(container.querySelectorAll('.btn-toggle:not(.reset-btn):not(.reset-btn-small):not(.collapse-btn)'))
+    const hasVisible = allButtons.some(b => !b.classList.contains('active'))
+    
+    allButtons.forEach(b => {
+      const shouldBeActive = hasVisible
+      const isActive = b.classList.contains('active')
+      
+      if (shouldBeActive !== isActive) {
+        b.classList.toggle('active')
+      }
+    })
+    
+    applyFilters()
+  })
+  
+  buttonContainer.appendChild(globalToggleBtn)
+  buttonContainer.appendChild(collapseBtn)
+  
+  globalHeader.appendChild(title)
+  globalHeader.appendChild(buttonContainer)
+  return globalHeader
+}
+
+function createCollapseButton(container) {
+  const btn = document.createElement('button')
+  btn.textContent = ''
+  btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small', 'collapse-btn')
+  btn.dataset.hoverText = 'Expand/Collapse'
+  
+  const icon = document.createElement('img')
+  icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
+  icon.width = 12
+  icon.height = 12
+  btn.appendChild(icon)
+  
+  let isCollapsed = false
+  
+  btn.addEventListener('click', () => {
+    icon.classList.remove('spin-once')
+    void icon.offsetWidth
+    icon.classList.add('spin-once')
+    
+    isCollapsed = !isCollapsed
+    
+    const filterGroups = container.querySelectorAll('.filter-group-wrap')
+    
+    filterGroups.forEach(group => {
+      if (isCollapsed) {
+        group.style.display = 'none'
+      } else {
+        group.style.display = ''
+      }
+    })
+    
+    if (isCollapsed) {
+      icon.style.transform = 'rotate(180deg)'
+    } else {
+      icon.style.transform = 'rotate(0deg)'
+    }
+  })
+  
+  return btn
+}
+
+function createToggleButton(clickHandler) {
+  const btn = document.createElement('button')
+  btn.textContent = ''
+  btn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small')
+  btn.dataset.hoverText = 'Toggle All'
+  
+  const icon = document.createElement('img')
+  icon.src = getEmbeddedImage('ui/category_icons/randomize_32px.png')
+  icon.width = 12
+  icon.height = 12
+  btn.appendChild(icon)
+  
+  btn.addEventListener('click', () => {
+    icon.classList.remove('spin-once')
+    void icon.offsetWidth
+    icon.classList.add('spin-once')
+    clickHandler()
+  })
+  
+  return btn
+}
+
+function createFactionFilterGroup(group) {
+  const fgwrapper = document.createElement('div')
+  fgwrapper.classList.add('filter-group-wrap')
+
+  const wrapper = document.createElement('div')
+  wrapper.classList.add('filter-group')
+  
+  // Group header with reset button
+  const header = document.createElement('div')
+  header.classList.add('filter-group-header')
+  
+  const headerTitle = document.createElement('div')
+  headerTitle.classList.add('filter-group-label')
+  headerTitle.textContent = group.header
+  header.appendChild(headerTitle)
+  
+  // Add small reset button to header
+  const resetBtn = document.createElement('button')
+  resetBtn.classList.add('btn-toggle', 'reset-btn', 'reset-btn-small')
+  resetBtn.dataset.hoverText = 'Toggle All'
+  resetBtn.textContent = ''
+  
+  const resetIcon = document.createElement('img')
+  resetIcon.src = getEmbeddedImage('ui/category_icons/randomize_32px.png')
+  resetIcon.width = 12
+  resetIcon.height = 12
+  resetBtn.appendChild(resetIcon)
+  
+  resetBtn.addEventListener('click', () => {
+    resetIcon.classList.remove('spin-once')
+    void resetIcon.offsetWidth
+    resetIcon.classList.add('spin-once')
+    
+    const buttons = wrapper.querySelectorAll('.btn-toggle:not(.reset-btn):not(.reset-btn-small)')
+    const hasActive = Array.from(buttons).some(b => b.classList.contains('active'))
+    
+    if (!hasActive) {
+      buttons.forEach(b => b.classList.add('active'))
+    } else {
+      buttons.forEach(b => b.classList.remove('active'))
+    }
+    
+    applyFilters()
+  })
+  
+  header.appendChild(resetBtn)
+  wrapper.appendChild(header)
+  fgwrapper.appendChild(wrapper)
+  
+  // Button container
+  const buttonWrap = document.createElement('div')
+  buttonWrap.classList.add('type-filterwrap')
+  wrapper.appendChild(buttonWrap)
+  
+  // Create buttons for each faction
+  group.options.forEach(factionID => {
+    // Create individual button wrapper
+    const btnWrapper = document.createElement('div')
+    btnWrapper.classList.add('buttonwrap')
+    
+    const btn = document.createElement('button')
+    const factionName = group.factionNames[factionID] || `Faction ${factionID}`
+    btn.textContent = factionName
+    btn.classList.add('btn-toggle')
+    btn.classList.add('bg')
+    btn.classList.add(`faction-${factionID}-short`)
+    btn.dataset.filterKey = 'factionID'
+    btn.dataset.filterValue = factionID
+    
+    btn.addEventListener('click', () => {
+      btn.classList.toggle('active')
+      applyFilters()
+    })
+    
+    btnWrapper.appendChild(btn)
+    buttonWrap.appendChild(btnWrapper)
+    wrapper.appendChild(buttonWrap)
+  })
+  
+  return fgwrapper
+}
+
+
 // Table rendering
 
 
@@ -23707,7 +24729,7 @@ function buildTableHeader(data) {
     .join('')
 
   const groupHeaders = data.attributeGroups
-    .map(g => `<th colspan="${g.attributes.length}" style="${g.style || ''}">${g.header || g.groupName}</th>`)
+    .map(g => `<th colspan="${g.attributes.length}" style="${g.style || ''}" data-hover-text="Drag to Re-Order">${g.header || g.groupName}</th>`)
     .join('')
   
   const groupHeaderRow = `<tr id="groupHeaderRow">${fixedGroupHeaders}${groupHeaders}</tr>`
@@ -24210,11 +25232,15 @@ function downloadCSV(csvContent, filename) {
 
 
 
+
+
 async function loadShips() {
   try {
     const data = await fetchShipData()
     
     buildFilterUI(data.filterGroups)
+    buildT2ShipFilterUI(data.t2ShipGroups)
+    buildFactionFilterUI(data.factionGroups)
     buildAttrFilterUI(data.attributeGroups)
     buildGeneralFilterButtons()
     buildTableHeader(data)
