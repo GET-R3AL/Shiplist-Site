@@ -23395,7 +23395,7 @@ function createAttrFilterGroup(group) {
     btn.dataset.hoverText = group.attributeNames[aid]
     
     // Check if this group should be hidden by default
-    const hiddenByDefaultGroups = ['Effective DPS', 'effective dps', 'Targeting', 'Drones', 'Structure', 'Miscellaneous'] // Add group names that should be hidden
+    const hiddenByDefaultGroups = ['Targeting', 'Drones', 'Structure', 'Miscellaneous'] // Add group names that should be hidden
     if (hiddenByDefaultGroups.some(name => group.groupName.toLowerCase().includes(name.toLowerCase()))) {
       btn.classList.add('active') // Add active class = hidden
     }
