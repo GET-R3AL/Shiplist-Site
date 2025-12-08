@@ -181,7 +181,7 @@ body {
   position: relative;
   display: flex;
   flex-direction: column;
-  width: 80.6vw;
+  max-width: 80.6vw;
   height: fit-content;
 }
 
@@ -1103,7 +1103,7 @@ td.unit141 {
 
 <body>
   <div class="table_container" id="tableContainer">
-    <h1>Ship List <p>(warning still very scuffed)</p> <h4>vote SVEN for CSM20 :)</h4></h1>
+    <h1>Ship List <p>(Very Work in Progress)</p></h1>
     
     <div id="filterContainer">
       <div class="filterContainerLabel">Filters</div>
@@ -23925,10 +23925,19 @@ function createCollapseButton(container) {
   icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
   icon.width = 12
   icon.height = 12
+  icon.style.transform = 'rotate(180deg)'
   btn.appendChild(icon)
   
   // Track collapsed state
-  let isCollapsed = false
+  let isCollapsed = true
+  
+  // Collapse groups by default
+  setTimeout(() => {
+    const filterGroups = container.querySelectorAll('.filter-group-wrap')
+    filterGroups.forEach(group => {
+      group.style.display = 'none'
+    })
+  }, 0)
   
   btn.addEventListener('click', () => {
     icon.classList.remove('spin-once')
@@ -24376,9 +24385,18 @@ function createCollapseButton(container) {
   icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
   icon.width = 12
   icon.height = 12
+  icon.style.transform = 'rotate(180deg)'
   btn.appendChild(icon)
   
-  let isCollapsed = false
+  let isCollapsed = true
+  
+  // Collapse groups by default
+  setTimeout(() => {
+    const filterGroups = container.querySelectorAll('.filter-group-wrap')
+    filterGroups.forEach(group => {
+      group.style.display = 'none'
+    })
+  }, 0)
   
   btn.addEventListener('click', () => {
     icon.classList.remove('spin-once')
@@ -24578,9 +24596,18 @@ function createCollapseButton(container) {
   icon.src = getEmbeddedImage('ui/system_icons/expand_16px.png')
   icon.width = 12
   icon.height = 12
+  icon.style.transform = 'rotate(180deg)'
   btn.appendChild(icon)
   
-  let isCollapsed = false
+  let isCollapsed = true
+  
+  // Collapse groups by default
+  setTimeout(() => {
+    const filterGroups = container.querySelectorAll('.filter-group-wrap')
+    filterGroups.forEach(group => {
+      group.style.display = 'none'
+    })
+  }, 0)
   
   btn.addEventListener('click', () => {
     icon.classList.remove('spin-once')
